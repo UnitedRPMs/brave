@@ -1,0 +1,12 @@
+#!/bin/bash
+
+echo 'Loading libs...'
+if [ `getconf LONG_BIT` = "64" ]; then
+libdir=lib64
+else
+libdir=lib
+fi
+
+
+cd /usr/$libdir/brave/
+LD_LIBRARY_PATH=$PWD:/usr/lib64:/usr/lib/ $PWD/brave --no-sandbox --no-default-browser-check --no-first-run "$@"
