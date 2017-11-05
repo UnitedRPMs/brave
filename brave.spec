@@ -78,7 +78,7 @@ install -dm 755 %{buildroot}/%{_libdir}/%{name} \
 %{buildroot}/%{_bindir}
 
 # Move to correct path
-cp -rf Brave-linux-x64/* $RPM_BUILD_ROOT%{_libdir}/%{name}/
+cp -rf brave-linux-x64/* $RPM_BUILD_ROOT%{_libdir}/%{name}/
 
 cp -f %{S:2} %{buildroot}/%{_bindir}/
 chmod a+x %{buildroot}/%{_bindir}/%{name}
