@@ -86,7 +86,7 @@ chmod a+x %{buildroot}/%{_libdir}/%{name}/%{name}
 
   # desktop
   install -dm 755 $RPM_BUILD_ROOT/%{_datadir}/pixmaps/
-  install -Dm644 res/app.png $RPM_BUILD_ROOT/%{_datadir}/pixmaps/%{name}.png
+  install -Dm644 res/dev/app.png $RPM_BUILD_ROOT/%{_datadir}/pixmaps/%{name}.png
   install -Dm644 "%{name}.desktop" "$RPM_BUILD_ROOT/%{_datadir}/applications/%{name}.desktop"
 
 %files
