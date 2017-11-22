@@ -7,6 +7,10 @@
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 %global gver .git%{shortcommit0}
 
+# Put here new versions of yarn
+#https://github.com/yarnpkg/yarn/releases
+%global y_ver 1.3.2
+
 Name: brave
 Summary: A web browser that stops ads and trackers by default. 
 Group: Applications/Internet
@@ -27,6 +31,7 @@ BuildRequires: nss-devel
 BuildRequires: alsa-lib-devel
 BuildRequires: gtk3-devel
 BuildRequires: gendesk
+BuildRequires: wget
 Provides: %{name}-browser = %{version}-%{release}
 ExclusiveArch: x86_64
 
@@ -40,6 +45,13 @@ Brave browser for Desktop and Laptop computers running Windows, OSX, and Linux.
 
 %build
 
+# get yarn
+wget -c https://github.com/yarnpkg/yarn/releases/download/v%{y_ver}/yarn-v%{y_ver}.tar.gz
+tar xmzvf yarn-v1.3.2.tar.gz -C ~
+
+# activate yarn
+echo "export PATH=$PATH:~/yarn-v%{y_ver}/bin/:~/yarn-v%{y_ver}/lib/" >> ~/.bashrc
+
 # get nvm
 
 git clone git://github.com/creationix/nvm.git ~/nvm
@@ -52,17 +64,16 @@ source ~/.bashrc
 nvm install 7
 nvm use 7
 
+# Begin the build
 XCFLAGS="-g -O2 -fstack-protector-strong -Wformat -Werror=format-security -D_FORTIFY_SOURCE=2" XLDFLAGS="-Wl,-z,relro"
 
-npm cache clean
-npm config set registry http://registry.npmjs.org/
-npm install
+~/yarn-v%{y_ver}/bin/yarn install
 
-# We need said a npm the path of binaries already installed... 
+# We need said a npm/yarn the path of binaries already installed... 
 export PATH=$PATH:/usr/bin/:$PWD/node_modules/.bin/
 
 # Now the installation
-CHANNEL=dev npm run build-package
+CHANNEL=dev ~/yarn-v%{y_ver}/bin/yarn run build-package
 
 # create *.desktop file
 gendesk -f -n \
@@ -102,6 +113,7 @@ chmod a+x %{buildroot}/%{_libdir}/%{name}/%{name}
 
 * Thu Nov 16 2017 David Vásquez <davidjeremias82 AT gmail DOT com> - 0.19.95-1
 - Updated to 0.19.95
+- Changed to yarn
 
 * Mon Nov 13 2017 David Vásquez <davidjeremias82 AT gmail DOT com> - 0.19.89-1
 - Updated 0.19.89
