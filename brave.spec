@@ -61,8 +61,8 @@ git clone git://github.com/creationix/nvm.git ~/nvm
 echo "source ~/nvm/nvm.sh" >> ~/.bashrc
 
 source ~/.bashrc
-nvm install 7
-nvm use 7
+nvm install 8
+nvm use 8
 
 # Begin the build
 XCFLAGS="-g -O2 -fstack-protector-strong -Wformat -Werror=format-security -D_FORTIFY_SOURCE=2" XLDFLAGS="-Wl,-z,relro"
