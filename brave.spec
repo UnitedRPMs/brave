@@ -9,7 +9,7 @@
 
 # Put here new versions of yarn
 #https://github.com/yarnpkg/yarn/releases
-%global y_ver 1.3.2
+%global y_ver 1.5.1
 
 Name: brave
 Summary: A web browser that stops ads and trackers by default. 
