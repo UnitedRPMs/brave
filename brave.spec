@@ -3,19 +3,19 @@
 %global debug_package %{nil}
 %global __os_install_post /usr/lib/rpm/brp-compress %{nil}
 
-%global commit0 a8cfb160479f1d00d0769368eb440030182bb83b
+%global commit0 6cda2e84f749e66409e9e3bca63f5796422e7edf
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 %global gver .git%{shortcommit0}
 
 # Put here new versions of yarn
 #https://github.com/yarnpkg/yarn/releases
-%global y_ver 1.5.1
+%global y_ver 1.6.0
 
 Name: brave
 Summary: A web browser that stops ads and trackers by default. 
 Group: Applications/Internet
 URL: https://www.brave.com/
-Version: 0.22.13
+Version: 0.22.669
 Release: 1%{?gver}%{?dist}
 License: MPLv2.0
 Source0: https://github.com/brave/browser-laptop/archive/%{commit0}.tar.gz#/%{name}-%{shortcommit0}.tar.gz
@@ -47,7 +47,7 @@ Brave browser for Desktop and Laptop computers running Windows, OSX, and Linux.
 
 # get yarn
 wget -c https://github.com/yarnpkg/yarn/releases/download/v%{y_ver}/yarn-v%{y_ver}.tar.gz
-tar xmzvf yarn-v1.3.2.tar.gz -C ~
+tar xmzvf yarn-v1.6.0.tar.gz -C ~
 
 # activate yarn
 echo "export PATH=$PATH:~/yarn-v%{y_ver}/bin/:~/yarn-v%{y_ver}/lib/" >> ~/.bashrc
@@ -61,19 +61,21 @@ git clone git://github.com/creationix/nvm.git ~/nvm
 echo "source ~/nvm/nvm.sh" >> ~/.bashrc
 
 source ~/.bashrc
-nvm install 8
-nvm use 8
+nvm install 10
+nvm use 10
 
 # Begin the build
 XCFLAGS="-g -O2 -fstack-protector-strong -Wformat -Werror=format-security -D_FORTIFY_SOURCE=2" XLDFLAGS="-Wl,-z,relro"
 
-~/yarn-v%{y_ver}/bin/yarn install
+#~/yarn-v%{y_ver}/bin/yarn install
+npm install 
 
 # We need said a npm/yarn the path of binaries already installed... 
 export PATH=$PATH:/usr/bin/:$PWD/node_modules/.bin/
 
 # Now the installation
-CHANNEL=dev ~/yarn-v%{y_ver}/bin/yarn run build-package
+#CHANNEL=dev ~/yarn-v%{y_ver}/bin/yarn run build-package
+CHANNEL=dev npm run build-package
 
 # create *.desktop file
 gendesk -f -n \
@@ -110,6 +112,10 @@ chmod a+x %{buildroot}/%{_libdir}/%{name}/%{name}
 
 
 %changelog
+
+* Sun May 06 2018 David Vásquez <davidjeremias82 AT gmail DOT com> - 0.22.669-1
+- Updated to 0.22.669
+- Again to npm
 
 * Thu Apr 12 2018 David Vásquez <davidjeremias82 AT gmail DOT com> - 0.22.13-1
 - Updated to 0.22.13
