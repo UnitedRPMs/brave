@@ -32,6 +32,7 @@ BuildRequires: alsa-lib-devel
 BuildRequires: gtk3-devel
 BuildRequires: gendesk
 BuildRequires: wget
+BuildRequires: gcc-c++
 Provides: %{name}-browser = %{version}-%{release}
 ExclusiveArch: x86_64
 
