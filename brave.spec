@@ -3,7 +3,7 @@
 %global debug_package %{nil}
 %global __os_install_post /usr/lib/rpm/brp-compress %{nil}
 
-%global commit0 a38be75ccb0f699f507b66c4d44b3b21d1677e25
+%global commit0 50bdb6df42550dd14f5636770ec8585aa26e361b
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 %global gver .git%{shortcommit0}
 
@@ -15,7 +15,7 @@ Name: brave
 Summary: A web browser that stops ads and trackers by default. 
 Group: Applications/Internet
 URL: https://www.brave.com/
-Version: 0.23.39
+Version: 0.23.73
 Release: 1%{?gver}%{?dist}
 License: MPLv2.0
 Source0: https://github.com/brave/browser-laptop/archive/%{commit0}.tar.gz#/%{name}-%{shortcommit0}.tar.gz
@@ -113,6 +113,9 @@ chmod a+x %{buildroot}/%{_libdir}/%{name}/%{name}
 
 
 %changelog
+
+* Wed Aug 01 2018 David Va <davidva AT tuta DOT io> 0.23.73-1
+- Updated to 0.23.73
 
 * Sat Jul 21 2018 David Va <davidjeremias82 AT gmail DOT com> - 0.23.39-1
 - Updated to 0.23.39
