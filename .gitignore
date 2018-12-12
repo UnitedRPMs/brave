@@ -3,4 +3,5 @@ BUILDROOT/*
 RPMS/*
 SPECS/*
 SRPMS/*
-brave*.tar.gz
+*.tar.gz
+.directory
