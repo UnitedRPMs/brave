@@ -7,6 +7,12 @@ else
 libdir=lib
 fi
 
+FLAG="--no-sandbox"
+
+if [[ -r /proc/sys/kernel/unprivileged_userns_clone && $(< /proc/sys/kernel/unprivileged_userns_clone) == 1 && -n $(zcat /proc/config.gz | grep CONFIG_USER_NS=y) ]]; then
+	FLAG=""
+fi
+
 
 cd /usr/$libdir/brave/
-LD_LIBRARY_PATH=$PWD:/usr/lib64:/usr/lib/ $PWD/brave --no-sandbox --no-default-browser-check --no-first-run "$@"
+LD_LIBRARY_PATH=$PWD:/usr/lib64:/usr/lib/ $PWD/brave "$FLAG" --password-store=basic --no-default-browser-check --no-first-run "$@"

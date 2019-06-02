@@ -3,9 +3,7 @@
 %global debug_package %{nil}
 %global __os_install_post /usr/lib/rpm/brp-compress %{nil}
 
-%global commit0 9138bbc750404c02629534be9a02a30b5ffe6192
-%global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
-%global gver .git%{shortcommit0}
+%global branch 0.67.x
 
 # Put here new versions of yarn
 #https://github.com/yarnpkg/yarn/releases
@@ -15,10 +13,10 @@ Name: brave
 Summary: A web browser that stops ads and trackers by default. 
 Group: Applications/Internet
 URL: https://www.brave.com/
-Version: 0.25.203
+Version: 0.67.72
 Release: 1%{?dist}
 License: MPLv2.0
-Source0: https://github.com/brave/browser-laptop/archive/%{commit0}.tar.gz#/%{name}-%{shortcommit0}.tar.gz
+Source0: https://github.com/brave/brave-browser/archive/%{branch}.zip#/%{name}-browser-%{branch}.tar.gz
 Source1: brave-snapshot
 Source2: brave
 #-------------------------------------
@@ -33,6 +31,9 @@ BuildRequires: gtk3-devel
 BuildRequires: gendesk
 BuildRequires: wget
 BuildRequires: gcc-c++
+%if 0%{?fedora} >= 29
+BuildRequires:	python-unversioned-command
+%endif
 Provides: %{name}-browser = %{version}-%{release}
 ExclusiveArch: x86_64
 
@@ -41,8 +42,8 @@ Brave browser for Desktop and Laptop computers running Windows, OSX, and Linux.
 
 %prep
 
-%{S:1} -c %{commit0}
-%setup -T -D -n %{name}-%{shortcommit0}
+%{S:1} -c %{branch}
+%setup -T -D -n %{name}-browser-%{branch}
 
 %build
 
@@ -62,21 +63,23 @@ git clone git://github.com/creationix/nvm.git ~/nvm
 echo "source ~/nvm/nvm.sh" >> ~/.bashrc
 
 source ~/.bashrc
-nvm install 10
-nvm use 10
+nvm install 8
+nvm use 8
 
 # Begin the build
 XCFLAGS="-g -O2 -fstack-protector-strong -Wformat -Werror=format-security -D_FORTIFY_SOURCE=2" XLDFLAGS="-Wl,-z,relro"
 
 #~/yarn-v%{y_ver}/bin/yarn install
-npm install 
+npm install home-path buffer-to-vinyl stream-combiner2 to-absolute-glob
+npm install
+npm run init --python=python2.7
 
 # We need said a npm/yarn the path of binaries already installed... 
 export PATH=$PATH:/usr/bin/:$PWD/node_modules/.bin/
 
 # Now the installation
 #CHANNEL=dev ~/yarn-v%{y_ver}/bin/yarn run build-package
-CHANNEL=dev npm run build-package
+#CHANNEL=dev npm run build-package
 
 # create *.desktop file
 gendesk -f -n \
@@ -87,16 +90,11 @@ gendesk -f -n \
 
 %install
 
-# Make destiny directories
-install -dm 755 %{buildroot}/%{_libdir}/%{name} \
-%{buildroot}/%{_bindir}
+  install -d -m0755 %{buildroot}/%{_libdir}
+  cp -a --reflink=auto brave-linux-x64 %{buildroot}/%{_libdir}/brave
 
-# Move to correct path
-cp -rf brave-linux-x64/* $RPM_BUILD_ROOT%{_libdir}/%{name}/
+  install -Dm0755 %{S:2} %{buildroot}/usr/bin/brave
 
-cp -f %{S:2} %{buildroot}/%{_bindir}/
-chmod a+x %{buildroot}/%{_bindir}/%{name}
-chmod a+x %{buildroot}/%{_libdir}/%{name}/%{name}
 
   # desktop
   install -dm 755 $RPM_BUILD_ROOT/%{_datadir}/pixmaps/
@@ -113,6 +111,9 @@ chmod a+x %{buildroot}/%{_libdir}/%{name}/%{name}
 
 
 %changelog
+
+* Sat Jun 01 2019 David Va <davidva AT tuta DOT io> 0.67.72-1
+- Updated to 0.67.72
 
 * Tue Dec 11 2018 David Va <davidva AT tuta DOT io> 0.25.203-1
 - Updated to 0.25.203

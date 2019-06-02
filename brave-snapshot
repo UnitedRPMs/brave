@@ -5,7 +5,7 @@ readargs() {
     case "$1" in
        -c)
         if [ "$2" ] ; then
-          commit="$2"
+          branch="$2"
           shift ; shift
         else
           echo "Missing a value for $1."
@@ -28,16 +28,14 @@ exit
 
 #  BEGIN THE PROGRAM
 readargs "$@"
-shortcommit=$( echo ${commit} | cut -c 1-7)
 name=brave
 
-rm -rf ${name}-${shortcommit}/
-rm -f ${name}-${shortcommit}.tar.gz
-git clone --depth 1 https://github.com/brave/browser-laptop.git ${name}-${shortcommit}
-#svn export https://github.com/videolan/vlc/trunk/ ${name}-${shortcommit}
-pushd ${name}-${shortcommit}
-git checkout --force "${commit}" 
+rm -rf ${name}-browser-${branch}/
+rm -f ${name}-browser-${branch}.tar.gz
+git clone -b ${branch} https://github.com/brave/brave-browser.git ${name}-browser-${branch} 
+pushd ${name}-browser-${branch}
+git submodule update --init --recursive
 echo "You are in Commit: $( git rev-parse HEAD )"
 popd
-tar -cvzf ${name}-${shortcommit}.tar.gz ${name}-${shortcommit}
+tar -cvzf ${name}-browser-${branch}.tar.gz ${name}-browser-${branch}
 
