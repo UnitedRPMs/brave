@@ -69,17 +69,17 @@ nvm use 8
 # Begin the build
 XCFLAGS="-g -O2 -fstack-protector-strong -Wformat -Werror=format-security -D_FORTIFY_SOURCE=2" XLDFLAGS="-Wl,-z,relro"
 
-#~/yarn-v%{y_ver}/bin/yarn install
-npm install home-path buffer-to-vinyl stream-combiner2 to-absolute-glob 
-npm install
-npm run init --python=python2.7 --target_os=linux --target_arch=x64
+~/yarn-v%{y_ver}/bin/yarn install
+#npm install home-path buffer-to-vinyl stream-combiner2 to-absolute-glob 
+#npm install
+#npm run init --python=python2.7 --target_os=linux --target_arch=x64
 #npm run init --python=python2.7
 
 # We need said a npm/yarn the path of binaries already installed... 
 export PATH=$PATH:/usr/bin/:$PWD/node_modules/.bin/
 
 # Now the installation
-#CHANNEL=dev ~/yarn-v%{y_ver}/bin/yarn run build-package
+CHANNEL=dev ~/yarn-v%{y_ver}/bin/yarn run init 
 #CHANNEL=dev npm run build-package
 
 # create *.desktop file
