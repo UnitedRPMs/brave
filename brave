@@ -2,17 +2,25 @@
 
 echo 'Loading libs...'
 if [ `getconf LONG_BIT` = "64" ]; then
-libdir=lib64
+libdir=/usr/lib64
 else
-libdir=lib
+libdir=/usr/lib
 fi
 
-FLAG="--no-sandbox"
-
-if [[ -r /proc/sys/kernel/unprivileged_userns_clone && $(< /proc/sys/kernel/unprivileged_userns_clone) == 1 && -n $(zcat /proc/config.gz | grep CONFIG_USER_NS=y) ]]; then
-	FLAG=""
+# Detect if PepperFlash has been installed (based on the package in packman)
+# If so, automatically enable it
+if [ -f $libdir/chromium/PepperFlash/libpepflashplayer.so ]; then
+      PEPPER_FLASH_VERSION=$(grep '"version":' $libdir/chromium/PepperFlash/manifest.json| grep -Po '(?<=version": ")(?:\d|\.)*')
+      PEPPERFLASH="--ppapi-flash-path=$libdir/chromium/PepperFlash/libpepflashplayer.so --ppapi-flash-version=$PEPPER_FLASH_VERSION"
 fi
 
+pushd $libdir/brave
 
-cd /usr/$libdir/brave/
-LD_LIBRARY_PATH=$PWD:/usr/lib64:/usr/lib/ $PWD/brave "$FLAG" --password-store=basic --no-default-browser-check --no-first-run "$@"
+
+LD_LIBRARY_PATH=$PWD:$libdir $PWD/brave ${PEPPERFLASH} "--password-store=basic" "--enable-plugins" "--enable-extensions" "--enable-user-scripts" "--enable-printing" "--enable-gpu-rasterization" "--enable-native-gpu-memory-buffers" "--enable-sync" "--auto-ssl-client-auth" "--no-default-browser-check" "--disable-gpu-driver-bug-workarounds" "$@"
+
+popd
+
+
+
+

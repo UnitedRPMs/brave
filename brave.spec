@@ -1,13 +1,6 @@
-%{?nodejs_find_provides_and_requires}
 %global _enable_debug_package 0
 %global debug_package %{nil}
 %global __os_install_post /usr/lib/rpm/brp-compress %{nil}
-
-%global branch 0.67.x
-
-# Put here new versions of yarn
-#https://github.com/yarnpkg/yarn/releases
-%global y_ver 1.6.0
 
 Name: brave
 Summary: A web browser that stops ads and trackers by default. 
@@ -16,25 +9,15 @@ URL: https://www.brave.com/
 Version: 0.67.72
 Release: 1%{?dist}
 License: MPLv2.0
-Source0: https://github.com/brave/brave-browser/archive/%{branch}.zip#/%{name}-browser-%{branch}.tar.gz
-Source1: brave-snapshot
+Source0: https://github.com/brave/brave-browser/releases/download/v%{version}/brave-v%{version}-linux-x64.zip
+Source1: logo.png
 Source2: brave
 #-------------------------------------
-BuildRequires: git 
-BuildRequires: ninja-build
-BuildRequires: python2-devel
-BuildRequires: libgnome-keyring-devel 
-BuildRequires: xorg-x11-server-Xvfb
-BuildRequires: nss-devel
-BuildRequires: alsa-lib-devel
-BuildRequires: gtk3-devel
-BuildRequires: gendesk
-BuildRequires: wget
-BuildRequires: gcc-c++
+BuildRequires:	gendesk
 %if 0%{?fedora} >= 29
-BuildRequires:	python-unversioned-command
+Requires:	python-unversioned-command
 %endif
-Provides: %{name}-browser = %{version}-%{release}
+Recommends:	chromium-pepper-flash
 ExclusiveArch: x86_64
 
 %description
@@ -42,45 +25,9 @@ Brave browser for Desktop and Laptop computers running Windows, OSX, and Linux.
 
 %prep
 
-%{S:1} -c %{branch}
-%setup -T -D -n %{name}-browser-%{branch}
+%setup -c brave-%{version}
 
 %build
-
-# get yarn
-wget -c https://github.com/yarnpkg/yarn/releases/download/v%{y_ver}/yarn-v%{y_ver}.tar.gz
-tar xmzvf yarn-v1.6.0.tar.gz -C ~
-
-# activate yarn
-echo "export PATH=$PATH:~/yarn-v%{y_ver}/bin/:~/yarn-v%{y_ver}/lib/" >> ~/.bashrc
-
-# get nvm
-
-git clone git://github.com/creationix/nvm.git ~/nvm
-
-# activate nvm
-
-echo "source ~/nvm/nvm.sh" >> ~/.bashrc
-
-source ~/.bashrc
-nvm install 8
-nvm use 8
-
-# Begin the build
-XCFLAGS="-g -O2 -fstack-protector-strong -Wformat -Werror=format-security -D_FORTIFY_SOURCE=2" XLDFLAGS="-Wl,-z,relro"
-
-~/yarn-v%{y_ver}/bin/yarn install
-#npm install home-path buffer-to-vinyl stream-combiner2 to-absolute-glob 
-#npm install
-#npm run init --python=python2.7 --target_os=linux --target_arch=x64
-#npm run init --python=python2.7
-
-# We need said a npm/yarn the path of binaries already installed... 
-export PATH=$PATH:/usr/bin/:$PWD/node_modules/.bin/
-
-# Now the installation
-CHANNEL=dev ~/yarn-v%{y_ver}/bin/yarn run init 
-#CHANNEL=dev npm run build-package
 
 # create *.desktop file
 gendesk -f -n \
@@ -92,19 +39,19 @@ gendesk -f -n \
 %install
 
   install -d -m0755 %{buildroot}/%{_libdir}
-  cp -a --reflink=auto brave-linux-x64 %{buildroot}/%{_libdir}/brave
+  cp -a --reflink=auto %{_builddir}/brave-%{version} %{buildroot}/%{_libdir}/brave
 
   install -Dm0755 %{S:2} %{buildroot}/usr/bin/brave
 
 
   # desktop
   install -dm 755 $RPM_BUILD_ROOT/%{_datadir}/pixmaps/
-  install -Dm644 res/dev/app.png $RPM_BUILD_ROOT/%{_datadir}/pixmaps/%{name}.png
+  install -Dm644 %{S:1} $RPM_BUILD_ROOT/%{_datadir}/pixmaps/%{name}.png
   install -Dm644 "%{name}.desktop" "$RPM_BUILD_ROOT/%{_datadir}/applications/%{name}.desktop"
 
 %files
 %defattr(755, root, root)
-%license LICENSE.txt
+%license LICENSE
 %{_bindir}/%{name}
 %{_datadir}/applications/%{name}.desktop
 %{_datadir}/pixmaps/%{name}.png
