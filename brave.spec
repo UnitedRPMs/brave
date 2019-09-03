@@ -60,7 +60,7 @@ gendesk -f -n \
 
 %changelog
 
-* Mon Sep 03 2019 David Va <davidva AT tuta DOT io> 0.71.63-1
+* Tue Sep 03 2019 David Va <davidva AT tuta DOT io> 0.71.63-1
 - Updated to 0.71.63
 
 * Thu Aug 29 2019 David Va <davidva AT tuta DOT io> 0.71.47-1
