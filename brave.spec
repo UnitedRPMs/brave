@@ -6,8 +6,8 @@ Name: brave
 Summary: A web browser that stops ads and trackers by default. 
 Group: Applications/Internet
 URL: https://www.brave.com/
-Version: 0.73.37
-Release: 1%{?dist}
+Version: 1.0.0
+Release: 7%{?dist}
 License: MPLv2.0
 Source0: https://github.com/brave/brave-browser/releases/download/v%{version}/brave-v%{version}-linux-x64.zip
 Source1: logo.png
@@ -59,6 +59,9 @@ gendesk -f -n \
 
 
 %changelog
+
+* Thu Nov 14 2019 David Va <davidva AT tuta DOT io> 1.0.0-7
+- Updated to 1.0.0
 
 * Tue Oct 29 2019 David Va <davidva AT tuta DOT io> 0.73.37-1
 - Updated to 0.73.37
